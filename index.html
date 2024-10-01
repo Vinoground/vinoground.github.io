@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="Scrutinizing LMMs over Dense Temporal Reasoning with Short Videos">
+  <meta name="keywords" content="scrutinize, LMM, temporal reasoning, short video">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vinoground</title>
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="index.css">
+  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/954/954591.png">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js"></script>
+  <script type="module" src="https://gradio.s3-us-west-2.amazonaws.com/4.8.0/gradio.js"></script>
+</head>
+
+<style>
+  .expandable-card .card-text-container {
+    max-height: 200px;
+    overflow-y: hidden;
+    position: relative;
+  }
+
+  .expandable-card.expanded .card-text-container {
+    max-height: none;
+  }
+
+  .expand-btn {
+    position: relative;
+    display: none;
+    background-color: rgba(255, 255, 255, 0.8);
+    /* margin-top: -20px; */
+    /* justify-content: center; */
+    color: #510c75;
+    border-color: transparent;
+  }
+
+  .expand-btn:hover {
+    background-color: rgba(200, 200, 200, 0.8);
+    text-decoration: none;
+    border-color: transparent;
+    color: #510c75;
+  }
+
+  .expand-btn:focus {
+    outline: none;
+    text-decoration: none;
+  }
+
+  .expandable-card:not(.expanded) .card-text-container:after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 90px;
+    background: linear-gradient(rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 1));
+  }
+
+  .expandable-card:not(.expanded) .expand-btn {
+    margin-top: -40px;
+  }
+
+  .card-body {
+    padding-bottom: 5px;
+  }
+
+  .vertical-flex-layout {
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .figure-img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .adjustable-font-size {
+    font-size: calc(0.5rem + 2vw);
+  }
+
+  .chat-history {
+    flex-grow: 1;
+    overflow-y: auto;
+    /* overflow-x: hidden; */
+    padding: 5px;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 10px;
+  }
+
+  #gradio pre {
+    background-color: transparent;
+  }
+
+.author-block a {
+    color: #008AD7;
+    font-weight: normal;
+}
+
+/* Adjust the vertical alignment and font size of the superscript */
+.author-block a sup {
+    vertical-align: baseline;
+    position: relative;
+    top: -0.3em; /* Adjusts the position slightly above the baseline */
+    right: -0.1em; /* Adjusts the position slightly to the right */
+    font-size: smaller; /* Makes the font size smaller if needed */
+}
+
+
+
+</style>
+
+<body>
+
+
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <h1 class="title is-1 publication-title">Vinoground<span class="is-size-2"><span class="is-size-1"></span></h1>
+            <h3 class="title is-2 publication-title">Scrutinizing LMMs over Dense Temporal Reasoning with Short Videos</h3>
+            <h5 class="subtitle is-4 publication-awards">arXiv 2024</h5>
+            <div class="is-size-4 publication-authors">
+
+              <span class="author-block">
+                <a href="https://pages.cs.wisc.edu/~harrisz">Jianrui Zhang</a>,
+              </span>
+
+
+              <span class="author-block">
+                <a href="https://pages.cs.wisc.edu/~mucai/">Mu Cai</a>,
+              </span>
+            
+            
+              <span class="author-block">
+                <a href="https://pages.cs.wisc.edu/~yongjaelee/" style="color:#008AD7;font-weight:normal;">Yong Jae
+                  Lee</a>
+              </span>
+            </div>
+
+
+            <div class="is-size-4 publication-authors">
+              <span class="author-block">University of Wisconsin-Madison</span>
+            </div>
+
+
+            <div class="column has-text-centered">
+              <div class="publication-links">
+                <span class="link-block">
+                  <a href="https://arxiv.org/abs/xxx" target="_blank"
+                    class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                    </span>
+                    <span>arXiv</span>
+                  </a>
+                </span>
+                <span class="link-block">
+                  <a href="https://github.com/xxx" target="_blank"
+                    class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="fab fa-github"></i>
+                    </span>
+                    <span>Code</span>
+                  </a>
+                </span>
+                <span class="link-block">
+                  <a href="https://huggingface.co/datasets/HanSolo9682/Vinoground" target="_blank"
+                    class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="fas fa-database"></i>
+                    </span>
+                    <span>Dataset</span>
+                  </a>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="hero teaser">
+    <div class="container is-max-desktop">
+      <div class="hero-body">
+        <h4 class="subtitle has-text-left">
+          🔥<span style="color: #ff3860">[NEW!]</span> We introduce <b>Vinoground</b>, a temporal counterfactual LMM evaluation benchmark encompassing 1000 short and natural video-caption pairs.
+          <br><br>
+          🔥<span style="color: #ff3860">[NEW!]</span> We are the first dataset to use truly natural negative videos within each counterfactual pair instead of synthetic or unnatural alternatives, making our benchmark even more difficult.
+          <br><br>
+          🔥<span style="color: #ff3860">[NEW!]</span> The best model, GPT-4o, performs at only ~50% on text and video score metrics while only 35% on the group score metric, which is severely overshadowed by the human baseline of ~90%.
+          <br><br>
+          🔥<span style="color: #ff3860">[NEW!]</span> We discover that LMMs are much better at analyzing coarse-level information than discovering fine-grained details.
+          <br><br>
+          Short video comprehension is still a problem not yet fully resolved, especially with dense temporal reasoning.
+        </h4>
+      </div>
+    </div>
+  </section>
+
+  <section class="section"  style="background-color:#efeff081">
+    <div class="container is-max-desktop">
+      <!-- Abstract. -->
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-six-fifths">
+          <h2 class="title is-3">Abstract</h2>
+          <div class="content has-text-justified">
+            <p>
+              There has been growing sentiment recently that modern large multimodal models (LMMs) have addressed most of the key challenges related to short video comprehension. As a result, both academia and industry are gradually shifting their attention towards the more complex challenges posed by understanding long-form videos. 
+              However, is this really the case?  Our studies indicate that LMMs still lack many fundamental reasoning capabilities even when dealing with short videos.  We introduce Vinoground, a temporal counterfactual LMM evaluation benchmark encompassing 1000 short and natural video-caption pairs. We demonstrate that existing LMMs severely struggle to distinguish temporal differences between different actions and object transformations.  For example, the best model GPT-4o only obtains ~50% on our text and video scores, showing a large gap compared to the human baseline of ~90%. All open-source multimodal models and CLIP-based models perform much worse, producing mostly random chance performance. Through this work, we shed light onto the fact that temporal reasoning in short videos is a problem yet to be fully solved.  
+            </p>
+  
+          </div>
+        </div>
+      </div>
+        
+    </div>
+  </section>
+
+
+
+  <section class="section">
+    <!-- Results. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-six-fifths">
+        <h2 class="title is-3"> Inspiration </h2>
+      </div>
+    </div>
+    <!-- </div> -->
+    <!--/ Results. -->    
+  <div class="container is-max-desktop">
+  
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+
+        <centering>
+          <div style="text-align: center;">
+            <img id="teaser" src="images/gpt4o-failure.png">  
+          </div>
+        </centering> 
+        
+        <div class="content has-text-justified"> 
+          <p>
+            <br><br>
+            GPT-4o, one of the state-of-the-art Large Multimodal Models (LMMs), is unable to answer a simple question with regards to the order two events happened. It not only did not mention any temporality in its response, its analyses for both videos are completely wrong.
+          </p>
+        </div> 
+        
+        <centering>
+          <div style="text-align: center;">
+            <img id="teaser" width="50%" src="images/wino.png"> 
+            <p>Above: an example instance from Winoground.</p>
+            <img id="teaser" src="images/vino.png"> 
+            <p>Above: an example instance from Vinoground.</p>       
+          </div>
+        </centering> 
+        
+        <div class="content has-text-justified"> 
+          <p>
+            <br><br>
+            Our work is inspired by Winoground, a challenging counterfactual benchmark
+            for visio-linguistic compositional reasoning in images.
+            In Winoground, a model must correctly match two images with their corresponding captions,
+            where both captions use the same set of words, but are rearranged to describe each image.
+
+            Our benchmark's name changes the `W' to a `V' for ``video",
+            and further employs temporal counterfactuals to emphasize this unique element in video data.
+          </p>
+        </div> 
+      </div>
+  </section>
+
+  <section class="section">
+    <!-- Results. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-six-fifths">
+        <h2 class="title is-3"> Data Curation </h2>
+      </div>
+    </div>
+    <!-- </div> -->
+    <!--/ Results. -->    
+  <div class="container is-max-desktop">
+  
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <centering>
+          <div style="text-align: center;">
+            <img id="teaser" width="70%" src="images/data curation.png">     
+          </div>
+        </centering>
+        <div class="content has-text-justified"> 
+          <p>
+            We use GPT-4 to generate counterfactual caption pair candidates,
+            then find the corresponding videos using VATEX's captions as the index
+            with the help of a sentence transformer and the FAISS library.
+            If no such video can be found, we search YouTube with the caption
+            in hopes of finding the corresponding video.  
+          </p>
+        </div>  
+      </div>
+  </section>
+
+  <section class="section">
+    <!-- Results. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-six-fifths">
+        <h2 class="title is-3"> Overview </h2>
+      </div>
+    </div>
+    <!-- </div> -->
+    <!--/ Results. -->    
+  <div class="container is-max-desktop">
+  
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <div class="content has-text-justified"> 
+          <p>
+            We provide an overview of the seven categories Vinoground encompasses in the flashcards below.
+          </p>
+        </div>
+        <centering>
+          <!-- <div style="text-align: center;">
+            <img id="teaser" width="70%" src="images/curation.png">     
+          </div> -->
+          <div class="container mt-5">
+            <!-- <h2 class="text-center mb-5">Who's GPT-4's favorite? Battles between State-of-the-Art Chatbots</h2> -->
+            <!-- Selection -->
+            <div class="form-row" style="justify-content: flex-end;">
+              <div class="form-group col-md-1">
+                <div class="col-md-2" style="width: 100%"><label>&nbsp;</label></div>
+                <div class="btn-group" role="group" aria-label="Left and Right Controller"
+                  style="width: 100%;align-items: flex-end;justify-content: center;flex-direction: row;display: flex;">
+                  <button type="button" class="form-control btn btn-primary" id="prev-question"><i
+                      class="material-icons">keyboard_arrow_left</i></button>
+                  <button type="button" class="form-control btn btn-primary" id="next-question"><i
+                      class="material-icons">keyboard_arrow_right</i></button>
+        
+                </div>
+              </div>
+            </div>
+        
+            <!-- Question Card -->
+            <div style="display: flex; justify-content: center; align-items: center;">
+              <div class="card mb-4" style="width: 100%; display: flex; align-items: center;">
+                <!-- <p><b>Description:</b> Monalisa is a famous painting by Leonardo da Vinci. </p> -->
+        
+                <div class="card-body" id="selected-question" style="display: flex; height: 120vh;">
+                  <div class="chat-history">
+                    <!-- Add your chat messages here -->
+                  </div>
+        
+                </div>
+              </div>
+            </div>
+        
+          </div>
+        </centering>  
+      </div>
+
+  </section>
+
+  <section class="section">
+    <!-- Results. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-six-fifths">
+        <h2 class="title is-3"> Metrics </h2>
+      </div>
+    </div>
+    <!-- </div> -->
+    <!--/ Results. -->    
+  <div class="container is-max-desktop">
+  
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <centering>
+          <div style="text-align: center;">
+            <img id="teaser" width="70%" src="images/metrics.png">     
+          </div>
+        </centering>
+        <div class="content has-text-justified"> 
+          <p>
+            <br><br>
+            We use text score, video score, and group score as our metrics to evaluate a model's textual, visual and temporal understanding capabilities in a balanced manner. 
+          </p>
+        </div>  
+      </div>
+  </section>
+
+
+<section class="section">
+  <!-- Results. -->
+  <div class="columns is-centered has-text-centered">
+    <div class="column is-six-fifths">
+      <h2 class="title is-3"><img id="painting_icon" width="3%" src="https://cdn-icons-png.flaticon.com/512/3515/3515174.png"> Performance</h2>
+    </div>
+  </div>
+
+
+
+  <!-- </div> -->
+  <!--/ Results. -->    
+<div class="container is-max-desktop">
+
+
+  <!-- Grounedtext2img. -->
+  <div class="columns is-centered">
+    <div class="column is-full-width">
+      <h2 class="title is-4">Overall Results</h2>
+        <div class="columns is-centered">
+          <div class="column is-full-width">
+
+      <div style="text-align: center;">
+        <img id="teaser" width="70%" src="images/overall results.png"> 
+      </div>
+      <div class="content has-text-justified"> 
+        The best model, GPT-4o, even with Chain-of-Thought prompting, can only perform at ~50% accuracy on text and video score, which is significantly undermined by the human baseline of ~90%.
+        All other models perform worse. Most open-source models perform at random chance level.
+        This demonstrates how Vinoground can be easily and accurately completed by an average human and the huge gap between LMMs and human intelligence with respect to temporal reasoning.
+      </div>
+
+    </div>
+  </div>
+
+
+
+  
+
+  <div class="columns is-centered">
+    <div class="column is-full-width">
+      <h2 class="title is-4">Ablation Study: Frames Sampled</h2>
+
+      
+      <div style="text-align: center;">
+
+        <img id="teaser" width="50%" src="images/frames.png"> 
+      </div>
+
+      <div>
+        <div class="columns is-centered">
+          <div class="column is-full-width">
+            <div class="content has-text-justified"> 
+        <p>
+          It can be seen that using more frames increases LMM performance on our benchmark. This shows that temporality is indeed needed to perform well for Vinoground, and that we are not suffering from "single-frame bias".
+          Too many frames, however, does signficantly harm performance, indicating how modern LMMs lack the ability to ignore useless visual signals from the inputs.
+          <br>
+          On the other hand, humans perform better when the entire video with audio is given when compared to most model's 32-frame sampling method. This indicates that finding ways for models to process more frames at once is an important research direction for temporal reasoning.
+        </p>
+      </div>
+    </div>
+
+
+  </div>
+
+  <div class="columns is-centered">
+    <div class="column is-full-width">
+      <h2 class="title is-4">Ablation Study: Performance by Category</h2>
+
+      
+      <div style="text-align: center;">
+
+        <img id="teaser" width="70%" src="images/category_bar_group.png"> 
+      </div>
+
+      <div>
+        <div class="columns is-centered">
+          <div class="column is-full-width">
+            <div class="content has-text-justified"> 
+        <p>
+          Interestingly, many models perform significantly better on the "viewpoint" and "contextual" categories that involve drastic frame changes, while being significantly worse on other categories.
+          This shows how models are much better at analyzing coarse-level information rather than fine-grained details.
+        </p>
+      </div>
+    </div>
+
+
+  </div>
+
+  
+</section>
+
+
+</section>
+
+  <section class="section" id="BibTeX">
+    <div class="container is-max-desktop content">
+      <h2 class="title">BibTeX</h2>
+      <pre><code>
+        @article{zhang2024vinoground,
+          title={Vinoground: Scrutinizing LMMs over Dense Temporal Reasoning with Short Videos},
+          author={Jianrui Zhang and Mu Cai and Yong Jae Lee}
+          journal={arXiv},
+          year={2024},
+          eprint={xxx},
+          archivePrefix={arXiv},
+          primaryClass={cs.CV},
+          url={https://arxiv.org/abs/24xxx}, 
+        }
+  </code></pre>
+    </div>
+  </section>
+  
+  <section class="section" id="Acknowledgement">
+    <div class="container is-max-desktop content">
+      <h2 class="title">Acknowledgement</h2>
+      <p>
+        This website is adapted from <a
+        href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>, licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+        Commons Attribution-ShareAlike 4.0 International License</a>.  We thank the LLaMA team for giving us access to their models, and open-source projects, including Alpaca and Vicuna.
+      </p>
+
+      <p>
+<b>Usage and License Notices</b>: The data, code and checkpoint is intended and licensed for research use only. They are also restricted to uses that follow the license agreement of CLIP, LLaMA, and GPT-4. The dataset is CC BY NC 4.0 (allowing only non-commercial use) and models trained using the dataset should not be used outside of research purposes.
+</p>
+
+      <!-- <p>
+      Related Links: 
+      <a href='https://instruction-tuning-with-gpt-4.github.io/'>[Instruction Tuning with GPT-4]</a>      
+      </p>     -->
+    </div>
+  </section>
+
+
+  <script>
+    // Handle message showing
+    function createChatRow(sender, text, imageSrc) {
+      var article = document.createElement("article");
+      article.className = "media"
+
+      // var figure = document.createElement("figure");
+      // figure.className = "media-left";
+
+      // var span = document.createElement("span");
+      // span.className = "icon is-large";
+
+      // var icon = document.createElement("i");
+      // icon.className = "fas fas fa-2x" + (sender === "User" ? " fa-user " : sender === "LLaVA" ? " fa-robot" : "");
+
+      var media = document.createElement("div");
+      media.className = "media-content";
+
+      var content = document.createElement("div");
+      content.className = "content";
+
+      var para = document.createElement("p");
+
+      // wrap text in pre tag to preserve whitespace and line breaks
+      var pre_text = document.createElement("pre");
+      pre_text.style = "background-color: white; font-size: 18px; font-family: Arial; padding: 0; margin: 0; white-space: pre-wrap; word-wrap: break-word;";
+      var paraText = document.createTextNode(text);
+      pre_text.appendChild(paraText);
+
+      var strong = document.createElement("strong");
+      strong.innerHTML = sender;
+      var br = document.createElement("br");
+
+      para.appendChild(strong);
+      para.appendChild(br);
+      para.appendChild(pre_text);
+
+      // Add image if imageSrc is provided
+      if (imageSrc) {
+        var vid = document.createElement("video");
+        vid.width = "640"
+        vid.height = "360"
+        vid.setAttribute("loop", "")
+        vid.setAttribute("autoplay", "")
+        vid.setAttribute("controls", "")
+        vid.setAttribute("muted", "")
+        vid.setAttribute("defaultmuted", "")
+        vid.setAttribute("playsinline", "")
+        var source = document.createElement("source")
+        source.src = imageSrc
+        source.type = "video/mp4"
+        vid.appendChild(source)
+        para.appendChild(vid);
+      }
+
+      content.appendChild(para);
+      media.appendChild(content);
+      // span.appendChild(icon);
+      // figure.appendChild(span);
+      // if (sender !== "Description") {
+      //   article.appendChild(figure);
+      // };
+      article.appendChild(media);
+      return article;
+    }
+
+    function addMessageToChatHistory(sender, message, imageSrc) {
+      const chatHistory = document.querySelector('.chat-history');
+      const chatRow = createChatRow(sender, message, imageSrc);
+      chatHistory.appendChild(chatRow);
+      chatHistory.scrollTop = chatHistory.scrollHeight;
+    }
+
+    function clearChatHistory() {
+      const chatHistory = document.querySelector('.chat-history');
+      chatHistory.innerHTML = "";
+    }
+
+    // 
+    const conversations = [
+      {
+        "description": "object",
+        "turns": [
+          // ["Description", "Please read the description and answer the question."],
+          ["Category", "Object"],
+          ["Positive Pair", "thin air turns into fire", "videos/22_pos.mp4"],
+          ["Negative Pair", "fire turns into thin air", "videos/22_neg.mp4"],
+        ]
+      },
+      {
+        "description": "action",
+        "turns": [
+          // ["Description", "Please read the description and answer the question."],
+          ["Category", "Action"],
+          ["Positive Pair", "a toddler plays around the grass field before he picks up a water bottle and drinks", "videos/0_pos.mp4"],
+          ["Negative Pair", "a toddler picks up a water bottle and drinks before he plays around the grass field", "videos/0_neg.mp4"],
+        ]
+      },
+      {
+        "description": "viewpoint",
+        "turns": [
+          // ["Description", "Please read the description and answer the question."],
+          ["Category", "Viewpoint"],
+          ["Positive Pair", "the camera was filming the man from his right side before the video cuts to an angle 45 degrees to his right behind", "videos/326_pos.mp4"],
+          ["Negative Pair", "the camera was filming the man from an angle 45 degrees to his right behind before the video cuts to his right side", "videos/326_neg.mp4"],
+        ]
+      },
+      {
+        "description": "interaction",
+        "turns": [
+          // ["Description", "Please read the description and answer the question."],
+          ["Category", "Interaction"],
+          ["Positive Pair", "the watermelon is cut then turned", "videos/122_pos.mp4"],
+          ["Negative Pair", "the watermelon is turned then cut", "videos/122_neg.mp4"],
+        ]
+      },
+      {
+        "description": "cyclical",
+        "turns": [
+          // ["Description", "Please read the description and answer the question."],
+          ["Category", "Cyclical"],
+          ["Positive Pair", "the old chinese man writes calligraphy on a piece of paper before he dips his brush in the ink", "videos/94_pos.mp4"],
+          ["Negative Pair", "the old chinese man dips his brush in the ink before he writes calligraphy on a piece of paper", "videos/94_neg.mp4"],
+        ]
+      },
+      {
+        "description": "spatial",
+        "turns": [
+          // ["Description", "Please read the description and answer the question."],
+          ["Category", "Spatial"],
+          ["Positive Pair", "a person moonwalks from the left to the right of the camera view", "videos/473_pos.mp4"],
+          ["Negative Pair", "a person moonwalks from the right to the left of the camera view", "videos/473_neg.mp4"],
+        ]
+      },
+      {
+        "description": "contextual",
+        "turns": [
+          // ["Description", "Please read the description and answer the question."],
+          ["Category", "Contextual"],
+          ["Positive Pair", "the man was landed before he is in the air gliding down", "videos/119_pos.mp4"],
+          ["Negative Pair", "the man was in the air gliding down before he is landed", "videos/119_neg.mp4"],
+        ]
+      },
+    ];
+
+    // The current image index
+    let currentIndex = 0;
+
+    // The function to update the displayed chat history
+    function update_dialog_demo() {
+      // Clear the chat history
+      clearChatHistory();
+
+      for (let i = 0; i < conversations[currentIndex].turns.length; i++) {
+        if (conversations[currentIndex].turns[i].length == 2) {
+          addMessageToChatHistory(conversations[currentIndex].turns[i][0], conversations[currentIndex].turns[i][1]);
+        }
+        else {
+          addMessageToChatHistory(conversations[currentIndex].turns[i][0], conversations[currentIndex].turns[i][1], conversations[currentIndex].turns[i][2]);
+        }
+      }
+
+      // scroll to the top of the chat history
+      document.querySelector('.chat-history').scrollTop = 0;
+    }
+
+    // Initialize the displayed image
+    update_dialog_demo();
+
+    // Event listeners for the buttons
+    document.getElementById('prev-question').addEventListener('click', () => {
+      currentIndex = (currentIndex - 1 + conversations.length) % conversations.length;
+      update_dialog_demo();
+    });
+
+    document.getElementById('next-question').addEventListener('click', () => {
+      currentIndex = (currentIndex + 1) % conversations.length;
+      update_dialog_demo();
+    });
+
+
+  </script>
+
+
+</body>
+
+</html>
