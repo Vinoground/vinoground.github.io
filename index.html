@@ -18,9 +18,33 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
 
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <!-- <link rel="stylesheet" href="./static/css/index.css"> -->
+  <link rel="stylesheet" href="./static/css/leaderboard.css">
+  <link rel="stylesheet" href="./static/css/video-player.css">
+
+
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js"></script>
   <script type="module" src="https://gradio.s3-us-west-2.amazonaws.com/4.8.0/gradio.js"></script>
+
+  <script type="text/javascript" src="static/js/sort-table.js" defer></script>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/explorer-index.js"></script>
+  <script src="./static/js/question_card.js"></script>
+
+  <script src="./static/js/leaderboard_testmini.js"></script>  
+  <script src="./data/results/output_folders.js" defer></script>
+  <script src="./data/results/model_scores.js" defer></script>
+
+  <script src="./visualizer/data/data_public.js" defer></script>
 </head>
 
 <style>
@@ -118,7 +142,13 @@
     right: -0.1em; /* Adjusts the position slightly to the right */
     font-size: smaller; /* Makes the font size smaller if needed */
 }
-
+  
+    .no-sort {
+        cursor: default;
+        pointer-events: none;
+        background-image: none !important; /* Remove the sort arrow */
+    }
+  
 
 
 </style>
@@ -191,7 +221,7 @@
                   </a>
                 </span>
                 <span class="link-block">
-                  <a href="https://paperswithcode.com/sota/temporal-relation-extraction-on-vinoground" target="_blank"
+                  <a href="#leaderboard"
                     class="external-link button is-normal is-rounded is-dark">
                     <span class="icon">
                       <i class="fas fa-chart-bar"></i>
@@ -211,15 +241,15 @@
     <div class="container is-max-desktop">
       <div class="hero-body">
         <h4 class="subtitle has-text-left">
-          🔥🔥🔥🔥<span style="color: #ff3860">[NEW!]</span> Vinoground has been integrated into <a href="https://github.com/EvolvingLMMs-Lab/lmms-eval">lmms-eval</a>. One can begin using it by cloning their repository. Evaluation is now made easier.
+          🔥 Vinoground has been integrated into <a href="https://github.com/EvolvingLMMs-Lab/lmms-eval">lmms-eval</a> and will be announced in the next public release. One can begin using it by cloning their repository. Evaluation is now made easier.
           <br><br>
-          🔥<span style="color: #ff3860">[NEW!]</span> We introduce <b>Vinoground</b>, a temporal counterfactual LMM evaluation benchmark encompassing 1000 short and natural video-caption pairs.
+          We introduce <b>Vinoground</b>, a temporal counterfactual LMM evaluation benchmark encompassing 1000 short and natural video-caption pairs.
           <br><br>
-          🔥<span style="color: #ff3860">[NEW!]</span> We are the first dataset to use truly natural negative videos within each counterfactual pair instead of synthetic or unnatural alternatives, making our benchmark even more difficult.
+          We are the first dataset to use truly natural negative videos within each counterfactual pair instead of synthetic or unnatural alternatives, making our benchmark even more difficult.
           <br><br>
-          🔥<span style="color: #ff3860">[NEW!]</span> The best model, GPT-4o, performs at only ~50% on text and video score metrics while only 35% on the group score metric, which is severely overshadowed by the human baseline of ~90%.
+          🔥<span style="color: #ff3860">[NEW!]</span> Even the best model, o3, performs at only 56% on group score, significantly worse than the human baseline of ~90%.
           <br><br>
-          🔥<span style="color: #ff3860">[NEW!]</span> We discover that LMMs are much better at analyzing coarse-level information than discovering fine-grained details.
+          We discover that LMMs are much better at analyzing coarse-level information than discovering fine-grained details.
           <br><br>
           Short video comprehension is still a problem not yet fully resolved, especially with dense temporal reasoning.
         </h4>
@@ -245,6 +275,426 @@
         
     </div>
   </section>
+  <section class="section">
+    <div class="container">
+      
+      <div class="columns is-centered">
+        <div class="column is-full has-text-centered content">
+
+          <h2 class="title is-3" id="leaderboard">Leaderboard</h2>
+          
+      <table class="js-sort-table" id="results" style="margin-left: auto; margin-right: auto;">
+      <thead>
+        <tr>
+          <th class="no-sort" style="vertical-align: middle; width: 200px;" data-js-sort-colNum="none"><strong>Model</strong></th>
+          <th class="no-sort" style="vertical-align: middle; width: 100px;" data-js-sort-colNum="none"><strong>Frames</strong></th>
+          <th style="vertical-align: middle; width: 150px; background-color: #f7f7f7;"  data-js-sort-colNum="2"><strong>Text Score (%)</strong></th>
+          <th style="vertical-align: middle; width: 150px; background-color: #e3f2fd;"  data-js-sort-colNum="3"><strong>Video Score (%)</strong></th>
+          <th style="vertical-align: middle; width: 150px; background-color: #d9ead3;"  data-js-sort-colNum="4"><strong>Group Score (%)</strong></th>
+        </tr>
+      </thead>
+      <tbody>
+      
+        <tr>
+          <td style="text-align: left; padding: 2px 10px;"><b class="">Human Performance
+            <p style="font-size: 12px; margin-left: 5px; color: #858383;"></p>
+          </b></td>
+          <td style="vertical-align: middle;">All</td>
+          <td style="vertical-align: middle; background-color: #f7f7f7;"><strong>93.4</strong></td>
+          <td style="vertical-align: middle; background-color: #e3f2fd;"><strong>94.0</strong></td>
+          <td style="vertical-align: middle; background-color: #d9ead3;"><strong>90.0</strong></td>
+        </tr>
+        <tr>
+          <td style="text-align: left; padding: 2px 10px;"><b class="">Human Performance
+            <p style="font-size: 12px; margin-left: 5px; color: #858383;"></p>
+          </b></td>
+          <td style="vertical-align: middle;">32</td>
+          <td style="vertical-align: middle; background-color: #f7f7f7;"><strong>91.4</strong></td>
+          <td style="vertical-align: middle; background-color: #e3f2fd;"><strong>90.8</strong></td>
+          <td style="vertical-align: middle; background-color: #d9ead3;"><strong>85.2</strong></td>
+        </tr>
+        <tr>
+          <td style="text-align: left; padding: 2px 10px;"><b class="">Random Chance
+            <p style="font-size: 12px; margin-left: 5px; color: #858383;"></p>
+          </b></td>
+          <td style="vertical-align: middle;">—</td>
+          <td style="vertical-align: middle; background-color: #f7f7f7;"><strong>25.0</strong></td>
+          <td style="vertical-align: middle; background-color: #e3f2fd;"><strong>25.0</strong></td>
+          <td style="vertical-align: middle; background-color: #d9ead3;"><strong>16.7</strong></td>
+        </tr>
+        <tr>
+          <td style="text-align: left; padding: 2px 10px;"><a href="https://openai.com/index/introducing-o3-and-o4-mini/"><b class="">o3
+            <p style="font-size: 12px; margin-left: 5px; color: #858383;"></p>
+          </a></b></td>
+          <td style="vertical-align: middle;">32</td>
+          <td style="vertical-align: middle; background-color: #f7f7f7;"><strong>72.8</strong></td>
+          <td style="vertical-align: middle; background-color: #e3f2fd;"><strong>70.2</strong></td>
+          <td style="vertical-align: middle; background-color: #d9ead3;"><strong>56.6</strong></td>
+        </tr>
+        <tr>
+          <td style="text-align: left; padding: 2px 10px;"><a href="https://openai.com/index/gpt-4-1/"><b class="">GPT-4.1
+            <p style="font-size: 12px; margin-left: 5px; color: #858383;"></p>
+          </a></b></td>
+          <td style="vertical-align: middle;">32</td>
+          <td style="vertical-align: middle; background-color: #f7f7f7;"><strong>69.1</strong></td>
+          <td style="vertical-align: middle; background-color: #e3f2fd;"><strong>48.6</strong></td>
+          <td style="vertical-align: middle; background-color: #d9ead3;"><strong>38.5</strong></td>
+        </tr>
+
+        <tr>
+          <td style="text-align: left; padding: 2px 10px;"><a href="https://openai.com/index/introducing-o3-and-o4-mini/"><b class="">o4-mini
+            <p style="font-size: 12px; margin-left: 5px; color: #858383;"></p>
+          </a></b></td>
+          <td style="vertical-align: middle;">32</td>
+          <td style="vertical-align: middle; background-color: #f7f7f7;"><strong>58.2</strong></td>
+          <td style="vertical-align: middle; background-color: #e3f2fd;"><strong>40.9</strong></td>
+          <td style="vertical-align: middle; background-color: #d9ead3;"><strong>28.5</strong></td>
+        </tr>
+
+        <tr>
+          <td style="text-align: left; padding: 2px 10px;"><a href="https://blog.google/technology/google-deepmind/gemini-model-thinking-updates-march-2025/"><b class="">Gemini-2.5-Pro
+            <p style="font-size: 12px; margin-left: 5px; color: #858383;"></p>
+          </a></b></td>
+          <td style="vertical-align: middle;">1fps</td>
+          <td style="vertical-align: middle; background-color: #f7f7f7;"><strong>65.0</strong></td>
+          <td style="vertical-align: middle; background-color: #e3f2fd;"><strong>62.4</strong></td>
+          <td style="vertical-align: middle; background-color: #d9ead3;"><strong>49.0</strong></td>
+        </tr>
+
+        <tr>
+          <td style="text-align: left; padding: 2px 10px;"><a href="https://blog.google/technology/google-deepmind/gemini-model-thinking-updates-march-2025/"><b class="">Gemini-2.5-Flash
+            <p style="font-size: 12px; margin-left: 5px; color: #858383;"></p>
+          </a></b></td>
+          <td style="vertical-align: middle;">1fps</td>
+          <td style="vertical-align: middle; background-color: #f7f7f7;"><strong>60.0</strong></td>
+          <td style="vertical-align: middle; background-color: #e3f2fd;"><strong>54.2</strong></td>
+          <td style="vertical-align: middle; background-color: #d9ead3;"><strong>41.8</strong></td>
+        </tr>
+
+        <tr>
+          <td style="text-align: left; padding: 2px 10px;"><a href="https://openai.com/o1/"><b class="">o1
+            <p style="font-size: 12px; margin-left: 5px; color: #858383;"></p></b></a></td>
+          <td style="vertical-align: middle;">32</td>
+          <td style="vertical-align: middle; background-color: #f7f7f7;"><strong>59.1</strong></td>
+          <td style="vertical-align: middle; background-color: #e3f2fd;"><strong>50.5</strong></td>
+          <td style="vertical-align: middle; background-color: #d9ead3;"><strong>36.0</strong></td>
+        </tr>
+
+        <tr>
+          <td style="text-align: left; padding: 2px 10px;"><a href="https://internvl.github.io/blog/2025-04-11-InternVL-3.0/"><b class="">InternVL3-78B
+            <p style="font-size: 12px; margin-left: 5px; color: #858383;"></p>
+          </a></b></td>
+          <td style="vertical-align: middle;">32</td>
+          <td style="vertical-align: middle; background-color: #f7f7f7;"><strong>66.2</strong></td>
+          <td style="vertical-align: middle; background-color: #e3f2fd;"><strong>48.8</strong></td>
+          <td style="vertical-align: middle; background-color: #d9ead3;"><strong>36.2</strong></td>
+        </tr>
+
+        <tr>
+          <td style="text-align: left; padding: 2px 10px;"><a href="https://internvl.github.io/blog/2025-04-11-InternVL-3.0/"><b class="">InternVL3-8B
+            <p style="font-size: 12px; margin-left: 5px; color: #858383;"></p>
+          </a></b></td>
+          <td style="vertical-align: middle;">32</td>
+          <td style="vertical-align: middle; background-color: #f7f7f7;"><strong>48.0</strong></td>
+          <td style="vertical-align: middle; background-color: #e3f2fd;"><strong>28.2</strong></td>
+          <td style="vertical-align: middle; background-color: #d9ead3;"><strong>14.6</strong></td>
+        </tr>
+
+        <tr>
+          <td style="text-align: left; padding: 2px 10px;"><a href="https://qwenlm.github.io/blog/qwen2.5-vl/"><b class="">Qwen2.5-VL-72B
+            <p style="font-size: 12px; margin-left: 5px; color: #858383;"></p>
+          </a></b></td>
+          <td style="vertical-align: middle;">32</td>
+          <td style="vertical-align: middle; background-color: #f7f7f7;"><strong>59.4</strong></td>
+          <td style="vertical-align: middle; background-color: #e3f2fd;"><strong>41.0</strong></td>
+          <td style="vertical-align: middle; background-color: #d9ead3;"><strong>29.6</strong></td>
+        </tr>
+
+        <tr>
+          <td style="text-align: left; padding: 2px 10px;"><a href="https://qwenlm.github.io/blog/qwen2.5-vl/"><b class="">Qwen2.5-VL-7B
+            <p style="font-size: 12px; margin-left: 5px; color: #858383;"></p>
+          </a></b></td>
+          <td style="vertical-align: middle;">32</td>
+          <td style="vertical-align: middle; background-color: #f7f7f7;"><strong>47.6</strong></td>
+          <td style="vertical-align: middle; background-color: #e3f2fd;"><strong>34.4</strong></td>
+          <td style="vertical-align: middle; background-color: #d9ead3;"><strong>19.2</strong></td>
+        </tr>
+
+        <tr>
+          <td style="text-align: left; padding: 2px 10px;"><a href="https://internvl.github.io/blog/2024-12-05-InternVL-2.5/"><b class="">InternVL2.5-78B
+            <p style="font-size: 12px; margin-left: 5px; color: #858383;"></p>
+          </a></b></td>
+          <td style="vertical-align: middle;">32</td>
+          <td style="vertical-align: middle; background-color: #f7f7f7;"><strong>58.0</strong></td>
+          <td style="vertical-align: middle; background-color: #e3f2fd;"><strong>40.6</strong></td>
+          <td style="vertical-align: middle; background-color: #d9ead3;"><strong>27.6</strong></td>
+        </tr>
+
+        <tr>
+          <td style="text-align: left; padding: 2px 10px;"><a href="https://internvl.github.io/blog/2024-12-05-InternVL-2.5/"><b class="">InternVL2.5-8B
+            <p style="font-size: 12px; margin-left: 5px; color: #858383;"></p>
+          </a></b></td>
+          <td style="vertical-align: middle;">32</td>
+          <td style="vertical-align: middle; background-color: #f7f7f7;"><strong>46.6</strong></td>
+          <td style="vertical-align: middle; background-color: #e3f2fd;"><strong>28.2</strong></td>
+          <td style="vertical-align: middle; background-color: #d9ead3;"><strong>14.4</strong></td>
+        </tr>
+
+        <tr>
+          <td style="text-align: left; padding: 2px 10px;"><a href="https://openai.com/index/hello-gpt-4o/"><b class="">GPT-4o
+            <p style="font-size: 12px; margin-left: 5px; color: #858383;"></p></b></a></td>
+          <td style="vertical-align: middle;">32</td>
+          <td style="vertical-align: middle; background-color: #f7f7f7;"><strong>54.0</strong></td>
+          <td style="vertical-align: middle; background-color: #e3f2fd;"><strong>38.2</strong></td>
+          <td style="vertical-align: middle; background-color: #d9ead3;"><strong>24.6</strong></td>
+        </tr>        
+        
+        <tr>
+          <td style="text-align: left; padding: 2px 10px;"><a href="https://blog.google/technology/google-deepmind/google-gemini-ai-update-december-2024/"><b class="">Gemini-2.0-Thinking
+            <p style="font-size: 12px; margin-left: 5px; color: #858383;"></p></b></a></td>
+          <td style="vertical-align: middle;">32</td>
+          <td style="vertical-align: middle; background-color: #f7f7f7;"><strong>39.0</strong></td>
+          <td style="vertical-align: middle; background-color: #e3f2fd;"><strong>31.2</strong></td>
+          <td style="vertical-align: middle; background-color: #d9ead3;"><strong>14.6</strong></td>
+        </tr>
+
+        <tr>
+          <td style="text-align: left; padding: 2px 10px;"><a href="https://blog.google/technology/ai/google-gemini-next-generation-model-february-2024/"><b class="">Gemini-1.5-Pro
+            <p style="font-size: 12px; margin-left: 5px; color: #858383;"></p></b></a></td>
+          <td style="vertical-align: middle;">1fps</td>
+          <td style="vertical-align: middle; background-color: #f7f7f7;"><strong>35.8</strong></td>
+          <td style="vertical-align: middle; background-color: #e3f2fd;"><strong>22.6</strong></td>
+          <td style="vertical-align: middle; background-color: #d9ead3;"><strong>10.2</strong></td>
+        </tr>
+
+        <tr>
+          <td style="text-align: left; padding: 2px 10px;"><a href="https://www.anthropic.com/news/claude-3-5-sonnet"><b class="">Claude 3.5 Sonnet
+            <p style="font-size: 12px; margin-left: 5px; color: #858383;"></p></b></a></td>
+          <td style="vertical-align: middle;">4</td>
+          <td style="vertical-align: middle; background-color: #f7f7f7;"><strong>32.8</strong></td>
+          <td style="vertical-align: middle; background-color: #e3f2fd;"><strong>28.8</strong></td>
+          <td style="vertical-align: middle; background-color: #d9ead3;"><strong>10.6</strong></td>
+        </tr>
+
+        <tr>
+          <td style="text-align: left; padding: 2px 10px;"><a href="https://qwenlm.github.io/blog/qwen2-vl/"><b class="">Qwen2-VL-72B
+            <p style="font-size: 12px; margin-left: 5px; color: #858383;"></p></b></a></td>
+          <td style="vertical-align: middle;">32</td>
+          <td style="vertical-align: middle; background-color: #f7f7f7;"><strong>50.4</strong></td>
+          <td style="vertical-align: middle; background-color: #e3f2fd;"><strong>32.6</strong></td>
+          <td style="vertical-align: middle; background-color: #d9ead3;"><strong>17.4</strong></td>
+        </tr>
+
+        <tr>
+          <td style="text-align: left; padding: 2px 10px;"><a href="https://qwenlm.github.io/blog/qwen2-vl/"><b class="">Qwen2-VL-7B
+            <p style="font-size: 12px; margin-left: 5px; color: #858383;"></p></b></a></td>
+          <td style="vertical-align: middle;">4fps</td>
+          <td style="vertical-align: middle; background-color: #f7f7f7;"><strong>40.2</strong></td>
+          <td style="vertical-align: middle; background-color: #e3f2fd;"><strong>32.4</strong></td>
+          <td style="vertical-align: middle; background-color: #d9ead3;"><strong>15.2</strong></td>
+        </tr>
+
+        <tr>
+          <td style="text-align: left; padding: 2px 10px;"><a href="https://llava-vl.github.io/blog/2024-09-30-llava-video/"><b class="">LLaVA-Video-72B
+            <p style="font-size: 12px; margin-left: 5px; color: #858383;"></p></b></a></td>
+          <td style="vertical-align: middle;">64</td>
+          <td style="vertical-align: middle; background-color: #f7f7f7;"><strong>49.2</strong></td>
+          <td style="vertical-align: middle; background-color: #e3f2fd;"><strong>34.0</strong></td>
+          <td style="vertical-align: middle; background-color: #d9ead3;"><strong>20.2</strong></td>
+        </tr>
+
+        <tr>
+          <td style="text-align: left; padding: 2px 10px;"><a href="https://llava-vl.github.io/blog/2024-09-30-llava-video/"><b class="">LLaVA-Video-7B
+            <p style="font-size: 12px; margin-left: 5px; color: #858383;"></p></b></a></td>
+          <td style="vertical-align: middle;">64</td>
+          <td style="vertical-align: middle; background-color: #f7f7f7;"><strong>42.4</strong></td>
+          <td style="vertical-align: middle; background-color: #e3f2fd;"><strong>30.0</strong></td>
+          <td style="vertical-align: middle; background-color: #d9ead3;"><strong>17.0</strong></td>
+        </tr>
+
+        <tr>
+          <td style="text-align: left; padding: 2px 10px;"><a href="https://llava-vl.github.io/blog/2024-08-05-llava-onevision/"><b class="">LLaVA-OneVision-Qwen2-72B
+            <p style="font-size: 12px; margin-left: 5px; color: #858383;"></p></b></a></td>
+          <td style="vertical-align: middle;">32</td>
+          <td style="vertical-align: middle; background-color: #f7f7f7;"><strong>48.4</strong></td>
+          <td style="vertical-align: middle; background-color: #e3f2fd;"><strong>35.2</strong></td>
+          <td style="vertical-align: middle; background-color: #d9ead3;"><strong>21.8</strong></td>
+        </tr>
+
+        <tr>
+          <td style="text-align: left; padding: 2px 10px;"><a href="https://llava-vl.github.io/blog/2024-08-05-llava-onevision/"><b class="">LLaVA-OneVision-Qwen2-7B
+            <p style="font-size: 12px; margin-left: 5px; color: #858383;"></p></b></a></td>
+          <td style="vertical-align: middle;">16</td>
+          <td style="vertical-align: middle; background-color: #f7f7f7;"><strong>41.6</strong></td>
+          <td style="vertical-align: middle; background-color: #e3f2fd;"><strong>29.4</strong></td>
+          <td style="vertical-align: middle; background-color: #d9ead3;"><strong>14.6</strong></td>
+        </tr>
+
+        <tr>
+          <td style="text-align: left; padding: 2px 10px;"><a href="https://github.com/DAMO-NLP-SG/VideoLLaMA3"><b class="">VideoLLaMA3
+            <p style="font-size: 12px; margin-left: 5px; color: #858383;"></p></b></a></td>
+          <td style="vertical-align: middle;">16</td>
+          <td style="vertical-align: middle; background-color: #f7f7f7;"><strong>47.4</strong></td>
+          <td style="vertical-align: middle; background-color: #e3f2fd;"><strong>30.4</strong></td>
+          <td style="vertical-align: middle; background-color: #d9ead3;"><strong>15.6</strong></td>
+        </tr>
+
+        <tr>
+          <td style="text-align: left; padding: 2px 10px;"><a href="https://apollo-lmms.github.io/"><b class="">Apollo-7B
+            <p style="font-size: 12px; margin-left: 5px; color: #858383;"></p></b></a></td>
+          <td style="vertical-align: middle;">4</td>
+          <td style="vertical-align: middle; background-color: #f7f7f7;"><strong>43.8</strong></td>
+          <td style="vertical-align: middle; background-color: #e3f2fd;"><strong>30.2</strong></td>
+          <td style="vertical-align: middle; background-color: #d9ead3;"><strong>17.2</strong></td>
+        </tr>
+
+        <tr>
+          <td style="text-align: left; padding: 2px 10px;"><a href="https://github.com/OpenGVLab/InternVideo"><b class="">InternVideo2.5-8B
+            <p style="font-size: 12px; margin-left: 5px; color: #858383;"></p></b></a></td>
+          <td style="vertical-align: middle;">32</td>
+          <td style="vertical-align: middle; background-color: #f7f7f7;"><strong>35.0</strong></td>
+          <td style="vertical-align: middle; background-color: #e3f2fd;"><strong>29.0</strong></td>
+          <td style="vertical-align: middle; background-color: #d9ead3;"><strong>11.4</strong></td>
+        </tr>
+
+        <tr>
+          <td style="text-align: left; padding: 2px 10px;"><a href="https://github.com/rhymes-ai/Aria"><b class="">Aria
+            <p style="font-size: 12px; margin-left: 5px; color: #858383;"></p></b></a></td>
+          <td style="vertical-align: middle;">32</td>
+          <td style="vertical-align: middle; background-color: #f7f7f7;"><strong>34.8</strong></td>
+          <td style="vertical-align: middle; background-color: #e3f2fd;"><strong>28.8</strong></td>
+          <td style="vertical-align: middle; background-color: #d9ead3;"><strong>12.0</strong></td>
+        </tr>
+        <tr>
+          <td style="text-align: left; padding: 2px 10px;"><a href="https://github.com/InternLM/InternLM-XComposer"><b class="">InternLM-XC-2.5
+            <p style="font-size: 12px; margin-left: 5px; color: #858383;"></p></b></a></td>
+          <td style="vertical-align: middle;">32/1fps</td>
+          <td style="vertical-align: middle; background-color: #f7f7f7;"><strong>28.8</strong></td>
+          <td style="vertical-align: middle; background-color: #e3f2fd;"><strong>27.8</strong></td>
+          <td style="vertical-align: middle; background-color: #d9ead3;"><strong>09.6</strong></td>
+        </tr>
+
+        <tr>
+          <td style="text-align: left; padding: 2px 10px;"><a href="https://github.com/DAMO-NLP-SG/VideoLLaMA2"><b class="">VideoLLaMA2-72B
+            <p style="font-size: 12px; margin-left: 5px; color: #858383;"></p></b></a></td>
+          <td style="vertical-align: middle;">8</td>
+          <td style="vertical-align: middle; background-color: #f7f7f7;"><strong>36.2</strong></td>
+          <td style="vertical-align: middle; background-color: #e3f2fd;"><strong>21.6</strong></td>
+          <td style="vertical-align: middle; background-color: #d9ead3;"><strong>08.4</strong></td>
+        </tr>
+
+        <tr>
+          <td style="text-align: left; padding: 2px 10px;"><a href="https://github.com/OpenBMB/MiniCPM-o"><b class="">MiniCPM-2.6
+            <p style="font-size: 12px; margin-left: 5px; color: #858383;"></p></b></a></td>
+          <td style="vertical-align: middle;">16</td>
+          <td style="vertical-align: middle; background-color: #f7f7f7;"><strong>32.6</strong></td>
+          <td style="vertical-align: middle; background-color: #e3f2fd;"><strong>29.2</strong></td>
+          <td style="vertical-align: middle; background-color: #d9ead3;"><strong>11.2</strong></td>
+        </tr>
+
+        <tr>
+          <td style="text-align: left; padding: 2px 10px;"><a href="https://llava-vl.github.io/blog/2024-04-30-llava-next-video/"><b class="">LLaVA-NeXT-Video-34B
+            <p style="font-size: 12px; margin-left: 5px; color: #858383;"></p></b></a></td>
+          <td style="vertical-align: middle;">32</td>
+          <td style="vertical-align: middle; background-color: #f7f7f7;"><strong>23.0</strong></td>
+          <td style="vertical-align: middle; background-color: #e3f2fd;"><strong>21.2</strong></td>
+          <td style="vertical-align: middle; background-color: #d9ead3;"><strong>03.8</strong></td>
+        </tr>
+
+        <tr>
+          <td style="text-align: left; padding: 2px 10px;"><a href="https://llava-vl.github.io/blog/2024-04-30-llava-next-video/"><b class="">LLaVA-NeXT-Video-7B
+            <p style="font-size: 12px; margin-left: 5px; color: #858383;"></p></b></a></td>
+          <td style="vertical-align: middle;">32</td>
+          <td style="vertical-align: middle; background-color: #f7f7f7;"><strong>21.8</strong></td>
+          <td style="vertical-align: middle; background-color: #e3f2fd;"><strong>25.6</strong></td>
+          <td style="vertical-align: middle; background-color: #d9ead3;"><strong>06.2</strong></td>
+        </tr>
+
+        <tr>
+          <td style="text-align: left; padding: 2px 10px;"><a href="https://github.com/PKU-YuanGroup/Video-LLaVA"><b class="">Video-LLaVA-7B
+            <p style="font-size: 12px; margin-left: 5px; color: #858383;"></p></b></a></td>
+          <td style="vertical-align: middle;">8</td>
+          <td style="vertical-align: middle; background-color: #f7f7f7;"><strong>24.8</strong></td>
+          <td style="vertical-align: middle; background-color: #e3f2fd;"><strong>25.8</strong></td>
+          <td style="vertical-align: middle; background-color: #d9ead3;"><strong>06.6</strong></td>
+        </tr>
+
+        <tr>
+          <td style="text-align: left; padding: 2px 10px;"><a href="https://techcommunity.microsoft.com/blog/azure-ai-services-blog/discover-the-new-multi-lingual-high-quality-phi-3-5-slms/4225280"><b class="">Phi-3.5-Vision
+            <p style="font-size: 12px; margin-left: 5px; color: #858383;"></p></b></a></td>
+          <td style="vertical-align: middle;">16</td>
+          <td style="vertical-align: middle; background-color: #f7f7f7;"><strong>24.0</strong></td>
+          <td style="vertical-align: middle; background-color: #e3f2fd;"><strong>22.4</strong></td>
+          <td style="vertical-align: middle; background-color: #d9ead3;"><strong>06.2</strong></td>
+        </tr>
+
+        <tr>
+          <td style="text-align: left; padding: 2px 10px;"><a href="https://boheumd.github.io/MA-LMM/"><b class="">MA-LMM-Vicuna-7B
+            <p style="font-size: 12px; margin-left: 5px; color: #858383;"></p></b></a></td>
+          <td style="vertical-align: middle;">4</td>
+          <td style="vertical-align: middle; background-color: #f7f7f7;"><strong>23.8</strong></td>
+          <td style="vertical-align: middle; background-color: #e3f2fd;"><strong>25.6</strong></td>
+          <td style="vertical-align: middle; background-color: #d9ead3;"><strong>06.8</strong></td>
+        </tr>
+
+        <tr>
+          <td style="text-align: left; padding: 2px 10px;"><a href="https://matryoshka-mm.github.io/"><b class="">M3
+            <p style="font-size: 12px; margin-left: 5px; color: #858383;"></p></b></a></td>
+          <td style="vertical-align: middle;">6</td>
+          <td style="vertical-align: middle; background-color: #f7f7f7;"><strong>21.2</strong></td>
+          <td style="vertical-align: middle; background-color: #e3f2fd;"><strong>25.8</strong></td>
+          <td style="vertical-align: middle; background-color: #d9ead3;"><strong>6.8</strong></td>
+        </tr>
+
+        <tr>
+          <td style="text-align: left; padding: 2px 10px;"><a href="https://github.com/huangb23/VTimeLLM"><b class="">VTimeLLM
+            <p style="font-size: 12px; margin-left: 5px; color: #858383;"></p></b></a></td>
+          <td style="vertical-align: middle;">100</td>
+          <td style="vertical-align: middle; background-color: #f7f7f7;"><strong>19.4</strong></td>
+          <td style="vertical-align: middle; background-color: #e3f2fd;"><strong>27.0</strong></td>
+          <td style="vertical-align: middle; background-color: #d9ead3;"><strong>5.2</strong></td>
+        </tr>
+
+
+        <tr>
+          <td style="text-align: left; padding: 2px 10px;"><a href="https://arxiv.org/abs/2109.14084"><b class="">VideoCLIP
+            <p style="font-size: 12px; margin-left: 5px; color: #858383;"></p></b></a></td>
+          <td style="vertical-align: middle;">60</td>
+          <td style="vertical-align: middle; background-color: #f7f7f7;"><strong>17.0</strong></td>
+          <td style="vertical-align: middle; background-color: #e3f2fd;"><strong>02.8</strong></td>
+          <td style="vertical-align: middle; background-color: #d9ead3;"><strong>01.2</strong></td>
+        </tr>
+
+        <tr>
+          <td style="text-align: left; padding: 2px 10px;"><a href="https://github.com/PKU-YuanGroup/LanguageBind"><b class="">LanguageBind
+            <p style="font-size: 12px; margin-left: 5px; color: #858383;"></p></b></a></td>
+          <td style="vertical-align: middle;">8</td>
+          <td style="vertical-align: middle; background-color: #f7f7f7;"><strong>10.6</strong></td>
+          <td style="vertical-align: middle; background-color: #e3f2fd;"><strong>05.0</strong></td>
+          <td style="vertical-align: middle; background-color: #d9ead3;"><strong>01.2</strong></td>
+        </tr>
+
+        <tr>
+          <td style="text-align: left; padding: 2px 10px;"><a href="https://imagebind.metademolab.com/"><b class="">ImageBind
+            <p style="font-size: 12px; margin-left: 5px; color: #858383;"></p></b></a></td>
+          <td style="vertical-align: middle;">20</td>
+          <td style="vertical-align: middle; background-color: #f7f7f7;"><strong>09.4</strong></td>
+          <td style="vertical-align: middle; background-color: #e3f2fd;"><strong>03.4</strong></td>
+          <td style="vertical-align: middle; background-color: #d9ead3;"><strong>00.6</strong></td>
+        </tr>
+
+
+
+      </tbody>                                              
+  </table> 
+
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
 
 
 
